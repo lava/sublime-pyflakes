@@ -4,6 +4,9 @@ import re
 import os
 import sys
 
+# version_info is a tuple like (3, 5, 2, 'final', 0)
+_python3 = sys.version_info[0] == 3
+
 def pyflakes_command(file_name):
   if sys.platform == 'win32':
     path = os.getenv('PATH').split(';')
@@ -52,6 +55,9 @@ class PyflakesListener(sublime_plugin.EventListener):
       file_name = view.file_name().replace(' ', '\ ')
       process = subprocess.Popen(pyflakes_command(file_name), stdout = subprocess.PIPE)
       results, error = process.communicate()
+
+      if _python3:
+          results = results.decode(sys.getdefaultencoding())
 
       if results:
         regions = []
